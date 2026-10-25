@@ -1,0 +1,970 @@
+FITNESTX - COMPLETE APP WIDGET TREE
+==============================================================================
+This document maps every screen/page in the application in the sequence in
+which the user navigates through the app, derived directly from the Flutter
+source code.
+==============================================================================
+
+==============================================================================
+APP ENTRY POINT (`lib/main.dart`)
+==============================================================================
+App Start
+└── MyApp
+    └── MaterialApp
+        └── _MobileFrame
+            └── Scaffold
+                └── Center
+                    └── ConstrainedBox
+                        └── AspectRatio
+                            └── Container
+                                └── WelcomeScreen
+
+
+==============================================================================
+1. ONBOARDING & AUTHENTICATION FLOW
+==============================================================================
+
+Welcome Screen (`screens/welcome_screen.dart`)
+└── WelcomeScreen
+    └── Scaffold
+        └── Container (LinearGradient)
+            └── SafeArea
+                └── Column
+                    ├── Spacer
+                    ├── RichText
+                    │   ├── TextSpan ('Fitnest')
+                    │   └── TextSpan ('X')
+                    ├── Text ('Everybody Can Train')
+                    ├── Spacer
+                    ├── SizedBox
+                    │   └── ElevatedButton ('Get Started')
+                    │       └── Navigate (pushReplacement) -> OnboardingScreen
+                    └── SizedBox
+
+
+Onboarding Screen (`screens/onboarding_screen.dart`)
+└── OnboardingScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── Expanded
+                │   └── PageView.builder (4 pages)
+                │       └── OnboardingPage (`widgets/onboarding_page.dart`)
+                │           └── Column
+                │               ├── Expanded (Top illustration)
+                │               │   └── [if hasBuiltInBackground: ClipRect -> Image.asset | else: Stack -> CustomPaint (_BlobPainter), Image.asset]
+                │               └── Expanded (Title & Description)
+                │                   └── Column
+                │                       ├── Text (title)
+                │                       └── Text (description)
+                └── Padding
+                    └── Row
+                        ├── Row (AnimatedContainer page dots)
+                        └── GestureDetector (Circular button)
+                            └── [if last page: Navigate (pushReplacement) -> RegisterScreen | else: PageController.nextPage]
+                                └── Container (circle gradient)
+                                    └── Icon (Icons.arrow_forward_ios / Icons.check)
+
+
+Register Screen (`screens/register_screen.dart`)
+└── RegisterScreen
+    └── Scaffold
+        └── SafeArea
+            └── SingleChildScrollView
+                └── Form
+                    └── Column
+                        ├── Text ('Hey there,')
+                        ├── Text ('Create an Account')
+                        ├── CustomTextField ('First Name')
+                        ├── CustomTextField ('Last Name')
+                        ├── CustomTextField ('Email')
+                        ├── CustomTextField ('Password', obscureText toggle)
+                        ├── Row (Privacy policy agreement)
+                        │   ├── Checkbox
+                        │   └── Text ('By continuing you accept our Privacy Policy...')
+                        ├── SizedBox
+                        │   └── DecoratedBox (LinearGradient)
+                        │       └── ElevatedButton ('Register')
+                        │           └── Navigate (push) -> ProfileScreen
+                        ├── Row (Divider 'Or' Divider)
+                        ├── Row (Social login buttons: Google, Facebook)
+                        └── Row ('Already have an account? Login')
+                            ├── Text
+                            └── GestureDetector
+                                └── Navigate (push) -> LoginScreen
+
+
+Login Screen (`screens/login_screen.dart`)
+└── LoginScreen
+    └── Scaffold
+        └── SafeArea
+            └── SingleChildScrollView
+                └── Form
+                    └── Column
+                        ├── Text ('Hey there,')
+                        ├── Text ('Welcome Back')
+                        ├── CustomTextField ('Email')
+                        ├── CustomTextField ('Password', obscureText toggle)
+                        ├── Text ('Forgot your password?')
+                        ├── SizedBox
+                        │   └── DecoratedBox (LinearGradient)
+                        │       └── ElevatedButton ('Login')
+                        │           └── Navigate (pushAndRemoveUntil) -> SuccessScreen
+                        ├── Row (Divider 'Or' Divider)
+                        ├── Row (Social login buttons: Google, Facebook)
+                        └── Row ("Don't have an account? Register")
+                            ├── Text
+                            └── GestureDetector
+                                └── Navigate (push) -> RegisterScreen
+
+
+Complete Profile Screen (`screens/profile_screen.dart`)
+└── ProfileScreen
+    └── Scaffold
+        └── SafeArea
+            └── SingleChildScrollView
+                └── Column
+                    ├── Image.asset ('assets/images/Mask Group.png')
+                    ├── Column
+                    │   ├── Text ("Let's complete your profile")
+                    │   └── Text ('It will help us to know more about you!')
+                    └── Column
+                        ├── DropdownButtonFormField ('Choose Gender')
+                        ├── CustomTextField ('Date of Birth', readOnly, onTap date picker)
+                        ├── Row ('Your Weight')
+                        │   ├── Expanded -> CustomTextField
+                        │   └── Container ('KG' badge)
+                        ├── Row ('Your Height')
+                        │   ├── Expanded -> CustomTextField
+                        │   └── Container ('CM' badge)
+                        └── SizedBox
+                            └── DecoratedBox (LinearGradient)
+                                └── ElevatedButton ('Next >')
+                                    └── Navigate (push) -> GoalScreen
+
+
+Goal Screen (`screens/goal_screen.dart`)
+└── GoalScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── Text ('What is your goal ?')
+                ├── Text ('It will help us to choose a best program for you')
+                ├── Expanded
+                │   └── PageView.builder (Goal cards)
+                │       └── Image.asset (Card goals illustration)
+                ├── Row (AnimatedContainer page dots)
+                └── SizedBox
+                    └── DecoratedBox (LinearGradient)
+                        └── ElevatedButton ('Confirm')
+                            └── Navigate (pushAndRemoveUntil) -> SuccessScreen
+
+
+Success Screen (`screens/success_screen.dart`)
+└── SuccessScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── Spacer
+                ├── SizedBox (Illustration area)
+                │   └── Stack
+                │       ├── Positioned -> CustomPaint (_SuccessBlobPainter)
+                │       └── Image.asset ('assets/images/Group.png')
+                ├── Text ('Welcome, TukaRam')
+                ├── Text ("You are all set now, let's reach your goals together with us")
+                ├── Spacer
+                └── GradientButton ('Go To Home')
+                    └── Navigate (pushAndRemoveUntil) -> MainNavScreen
+
+
+==============================================================================
+2. MAIN APP SHELL & DASHBOARD
+==============================================================================
+
+Main Navigation Shell (`screens/main_nav_screen.dart`)
+└── MainNavScreen
+    └── Scaffold
+        ├── body: IndexedStack
+        │   ├── Tab 0: HomeScreen
+        │   ├── Tab 1: ActivityTrackerScreen
+        │   ├── Tab 2: _SearchPlaceholderScreen
+        │   └── Tab 3: UserProfileScreen
+        └── bottomNavigationBar: Container
+            └── SafeArea
+                └── Row
+                    ├── GestureDetector (Tab 0: 'Home' Icon & Text)
+                    ├── GestureDetector (Tab 1: 'Activity' Icon & Text)
+                    ├── GestureDetector (Center '+' Floating Action Button)
+                    │   └── showModalBottomSheet (_showQuickAddDialog)
+                    │       └── Container
+                    │           └── Column
+                    │               ├── Drag handle Container
+                    │               ├── Text ('Quick Add')
+                    │               └── Row (Quick items: Workout, Meal, Water, Sleep)
+                    ├── GestureDetector (Tab 2: 'Camera' Icon & Text)
+                    └── GestureDetector (Tab 3: 'Profile' Icon & Text)
+
+
+Camera / Search Tab Placeholder (`screens/main_nav_screen.dart` - `_SearchPlaceholderScreen`)
+└── _SearchPlaceholderScreen
+    └── Scaffold
+        └── SafeArea
+            └── Center
+                └── Column
+                    ├── Container (Camera icon)
+                    ├── Text ('Coming Soon')
+                    ├── Text ('Meal scanner & workout camera will be available here')
+                    └── GestureDetector ('Open Progress Tracker')
+                        └── Navigate (push) -> ProgressPhotoScreen
+
+
+Home Screen / Dashboard (`screens/home_screen.dart`)
+└── HomeScreen
+    └── Scaffold
+        └── SafeArea
+            └── SingleChildScrollView
+                └── Column
+                    ├── _buildHeader()
+                    │   └── Row
+                    │       ├── Column (Text 'Welcome Back,', Text 'TukaRam')
+                    │       └── Row
+                    │           ├── GestureDetector (Bell Icon)
+                    │           │   └── Navigate (push) -> NotificationScreen
+                    │           └── Container (Profile Avatar 'T')
+                    ├── _buildBMICard()
+                    │   └── Container (LinearGradient)
+                    │       └── Row
+                    │           ├── Expanded -> Column (Text 'BMI', Text status, Container 'View More')
+                    │           └── SizedBox -> Stack (CircularProgressIndicator, Text bmiValue)
+                    ├── _buildTodayTarget()
+                    │   └── Container -> Row (Text 'Today Target', Container 'Check')
+                    ├── _buildActivityStatus()
+                    │   └── Column
+                    │       ├── Text ('Activity Status')
+                    │       ├── _buildHeartRateCard() (Container -> LineChart)
+                    │       ├── Row
+                    │       │   ├── Expanded -> _buildWaterIntakeCard() (Bar progress)
+                    │       │   └── Expanded -> _buildSleepCard() (Illustration & hours)
+                    │       └── _buildCaloriesCard() (Circular progress & breakdown)
+                    ├── _buildWorkoutProgress()
+                    │   └── Column
+                    │       ├── Row (Text 'Workout Progress', Container 'Weekly')
+                    │       └── SizedBox -> BarChart
+                    ├── _buildLatestWorkouts()
+                    │   └── Column
+                    │       ├── Row
+                    │       │   ├── Text ('Latest Workout')
+                    │       │   └── GestureDetector ('See more')
+                    │       │       └── Navigate (push) -> WorkoutTrackerScreen
+                    │       └── Column of _buildWorkoutItem()
+                    │           └── GestureDetector
+                    │               ├── Navigate (push) -> WorkoutTrackerScreen
+                    │               └── Container -> Row (Icon, Column: Name & Calories, Icon arrow)
+                    ├── _buildMealPlannerCard()
+                    │   └── GestureDetector
+                    │       ├── Navigate (push) -> MealPlannerScreen
+                    │       └── Container (LinearGradient) -> Row (Icon, Column: Title & Subtitle, Icon arrow)
+                    ├── _buildSleepTrackerCard()
+                    │   └── GestureDetector
+                    │       ├── Navigate (push) -> SleepTrackerScreen
+                    │       └── Container (LinearGradient) -> Row (Icon, Column: Title & Subtitle, Icon arrow)
+                    └── _buildProgressTrackerCard()
+                        └── GestureDetector
+                            ├── Navigate (push) -> ProgressPhotoScreen
+                            └── Container (LinearGradient) -> Row (Icon, Column: Title & Subtitle, Icon arrow)
+
+
+Notification Screen (`screens/notification_screen.dart`)
+└── NotificationScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── _buildHeader()
+                │   └── Row
+                │       ├── GestureDetector Back [Navigator.pop]
+                │       ├── Text ('Notification')
+                │       └── Container (More icon)
+                └── Expanded
+                    └── [if _notifications.isEmpty: Center -> Column (Icon, Text 'No notifications yet')]
+                        [else: ListView.separated
+                            └── Dismissible / Container
+                                └── Row (Icon, Column: Title Text, Subtitle Text, Icon more)]
+
+
+Activity Tracker Screen (`screens/activity_tracker_screen.dart`)
+└── ActivityTrackerScreen
+    └── Scaffold
+        └── SafeArea
+            └── SingleChildScrollView
+                └── Column
+                    ├── _buildHeader()
+                    │   └── Row
+                    │       ├── GestureDetector Back [Navigator.pop]
+                    │       ├── Text ('Activity Tracker')
+                    │       └── Container (More icon)
+                    ├── _buildTodayTarget()
+                    │   └── Container
+                    │       └── Column
+                    │           ├── Row (Text 'Today Target', Container '+' button)
+                    │           └── Row
+                    │               ├── Expanded -> _buildTargetItem (Water Intake: Icon, Value, Subtitle)
+                    │               └── Expanded -> _buildTargetItem (Foot Steps: Icon, Value, Subtitle)
+                    ├── _buildActivityProgress()
+                    │   └── Column
+                    │       ├── Row (Text 'Activity Progress', Container 'Weekly')
+                    │       └── SizedBox -> BarChart
+                    └── _buildLatestActivity()
+                        └── Column
+                            ├── Row (Text 'Latest Activity', Text 'See more')
+                            └── Column of activity items (Container -> Row: Icon, Column: Name & Time, Icon more)
+
+
+User Profile Screen (`screens/user_profile_screen.dart`)
+└── UserProfileScreen
+    └── Scaffold
+        └── SafeArea
+            └── SingleChildScrollView
+                └── Column
+                    ├── _buildHeader()
+                    │   └── Center -> Text ('Profile')
+                    ├── _buildProfileCard()
+                    │   └── Row
+                    │       ├── Container (Avatar 'T')
+                    │       ├── Expanded -> Column (Text 'TukaRam', Text 'Lose a Fat')
+                    │       └── Container (Button 'Edit')
+                    ├── _buildStatsRow()
+                    │   └── Row
+                    │       ├── Expanded -> Container (Height: Value, Label)
+                    │       ├── Expanded -> Container (Weight: Value, Label)
+                    │       └── Expanded -> Container (Age: Value, Label)
+                    ├── _buildAccountSection()
+                    │   └── Column
+                    │       ├── Text ('Account')
+                    │       ├── _buildMenuItem ('Personal Data')
+                    │       ├── _buildMenuItem ('Achievement')
+                    │       ├── _buildMenuItem ('Activity History')
+                    │       └── _buildMenuItem ('Workout Progress')
+                    │           └── GestureDetector
+                    │               └── Navigate (push) -> ProgressPhotoScreen
+                    ├── _buildNotificationSection()
+                    │   └── Column
+                    │       ├── Text ('Notification')
+                    │       └── Container -> Row (Icon, Text 'Pop-up Notification', Switch)
+                    └── _buildOtherSection()
+                        └── Column
+                            ├── Text ('Other')
+                            ├── _buildMenuItem ('Contact Us')
+                            ├── _buildMenuItem ('Privacy Policy')
+                            ├── _buildMenuItem ('Settings')
+                            └── _buildMenuItem ('Logout')
+                                └── GestureDetector
+                                    └── Navigate (pushAndRemoveUntil) -> WelcomeScreen
+
+
+==============================================================================
+3. WORKOUT TRACKER SUBSYSTEM
+==============================================================================
+
+Workout Tracker Screen (`screens/workout/workout_tracker_screen.dart`)
+└── WorkoutTrackerScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── _buildHeader()
+                │   └── Row
+                │       ├── GestureDetector Back [Navigator.pop]
+                │       ├── Text ('Workout Tracker')
+                │       └── Container (More icon)
+                └── Expanded
+                    └── SingleChildScrollView
+                        └── Column
+                            ├── _buildWeeklyChart() (Container -> Column: Dropdown 'Weekly', SizedBox -> LineChart)
+                            ├── _buildScheduleSection()
+                            │   └── Container -> Row
+                            │       ├── Text ('Daily Workout Schedule')
+                            │       └── TextButton ('Check')
+                            │           └── Navigate (push) -> WorkoutScheduleScreen
+                            ├── _buildDailyScheduleRow()
+                            │   └── GestureDetector
+                            │       ├── Navigate (push) -> WorkoutScheduleScreen
+                            │       └── Row (Calendar icon, Text scheduled workouts count, Icon arrow)
+                            ├── _buildUpcomingSection()
+                            │   └── Column
+                            │       ├── Row
+                            │       │   ├── Text ('Upcoming Workout')
+                            │       │   └── TextButton ('See more')
+                            │       │       └── Navigate (push) -> WorkoutScheduleScreen
+                            │       └── Column of upcoming workout cards
+                            │           └── GestureDetector
+                            │               ├── Navigate (push) -> WorkoutDetailsScreen
+                            │               └── Container -> Row (Image/Icon, Column: Name & Time, Switch)
+                            ├── Text ('What Do You Want To Train')
+                            └── _buildWorkoutGrid()
+                                └── Column of training category cards
+                                    └── GestureDetector
+                                        ├── Navigate (push) -> WorkoutDetailsScreen
+                                        └── Container -> Row (Column: Title, Exercises count, Duration, 'View more', Image)
+
+
+Workout Schedule Screen (`screens/workout/workout_schedule_screen.dart`)
+└── WorkoutScheduleScreen
+    └── Scaffold
+        ├── body: SafeArea
+        │   └── Column
+        │       ├── _buildHeader()
+        │       │   └── Row
+        │       │       ├── GestureDetector Back [Navigator.pop]
+        │       │       ├── Text ('Workout Schedule')
+        │       │       └── Container (More icon)
+        │       └── Expanded
+        │           └── CustomScrollView
+        │               ├── SliverToBoxAdapter -> _buildMonthNavigator() (Row: Previous, Month/Year Text, Next)
+        │               ├── SliverToBoxAdapter -> _buildDateRow() (ListView.builder of date chips)
+        │               ├── SliverToBoxAdapter -> [if _schedulesForSelectedDay.isEmpty: _buildEmptyState() | else: SizedBox]
+        │               └── SliverList (Time slots)
+        │                   └── _buildTimeSlot()
+        │                       └── Row
+        │                           ├── Text (Hour label)
+        │                           └── [if schedule item exists: GestureDetector -> Navigate (push) -> WorkoutScheduleDetailsScreen | else: Divider]
+        └── floatingActionButton: FloatingActionButton ('+')
+            └── Navigate (push) -> AddWorkoutScheduleScreen
+
+
+Workout Schedule Details Screen (`screens/workout/workout_schedule_details_screen.dart`)
+└── WorkoutScheduleDetailsScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── _buildHeader()
+                │   └── Row
+                │       ├── GestureDetector Back [Navigator.pop]
+                │       ├── Text ('Workout Schedule')
+                │       └── SizedBox
+                └── Expanded
+                    └── SingleChildScrollView
+                        └── Padding
+                            └── _buildDetailsCard()
+                                └── Container
+                                    └── Column
+                                        ├── Row (Workout Icon, Column: Name & Category)
+                                        ├── Divider
+                                        ├── Detail Rows (Date, Time, Difficulty, Repetitions, Weights, Status)
+                                        └── [if !completed: ElevatedButton ('Mark as Done')]
+                                            [else: Container ('Completed' badge)]
+
+
+Add Workout Schedule Screen (`screens/workout/add_workout_schedule_screen.dart`)
+└── AddWorkoutScheduleScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── _buildHeader()
+                │   └── Row
+                │       ├── GestureDetector Back [Navigator.pop]
+                │       ├── Text ('Add Schedule')
+                │       └── Container (More icon)
+                └── Expanded
+                    └── SingleChildScrollView
+                        └── Column
+                            ├── _buildDateSection() (InkWell -> Row: Calendar icon, Text 'Date', selected date)
+                            ├── _buildTimeSection() (InkWell -> Row: Clock icon, Text 'Time', selected time)
+                            ├── _buildDetailsSection()
+                            │   └── Column
+                            │       ├── Workout picker row (Choice chips / dialog)
+                            │       ├── Difficulty level row (Choice chips: Beginner, Intermediate, Advanced)
+                            │       ├── Custom repetitions row
+                            │       └── Custom weights row
+                            └── _buildSaveButton()
+                                └── ElevatedButton ('Save')
+                                    └── Navigator.pop(context)
+
+
+Workout Details Screen (`screens/workout/workout_details_screen.dart`)
+└── WorkoutDetailsScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── _buildImageHeader()
+                │   └── SizedBox
+                │       └── Stack
+                │           ├── Image.asset (Workout cover image)
+                │           ├── Container (Gradient overlay)
+                │           ├── Positioned Back Button (GestureDetector [Navigator.pop])
+                │           └── Positioned More Button (Icon)
+                └── Expanded
+                    └── SingleChildScrollView
+                        └── Column
+                            ├── _buildWorkoutTitle() (Row: Title, Favorite icon, Subtitle)
+                            ├── _buildScheduleRow() (Row: Calendar icon, Schedule time info)
+                            ├── _buildDifficultyRow() (Row: Difficulty badge, Exercises count, Calories)
+                            ├── _buildYoullNeed() (Row of equipment icons / labels)
+                            ├── _buildExerciseList()
+                            │   └── Column of exercise items
+                            │       └── GestureDetector
+                            │           ├── Navigate (push) -> ExerciseDetailsScreen
+                            │           └── Container -> Row (Image/Icon, Column: Name & Reps, Icon arrow)
+                            └── _buildStartButton()
+                                └── ElevatedButton ('Start Workout')
+                                    └── Navigate (push) -> WorkoutProgressScreen
+
+
+Exercise Details Screen (`screens/workout/exercise_details_screen.dart`)
+└── ExerciseDetailsScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── _buildMediaArea()
+                │   └── SizedBox
+                │       └── Stack
+                │           ├── [if video ready: AspectRatio -> VideoPlayer | else: Image.asset placeholder]
+                │           ├── Center play/pause GestureDetector (Icon play/pause)
+                │           ├── Positioned Back Button (GestureDetector [Navigator.pop])
+                │           └── Positioned More Button (Icon)
+                └── Expanded
+                    └── SingleChildScrollView
+                        └── Column
+                            ├── _buildExerciseHeader() (Title Text, Duration & Calories Text)
+                            ├── _buildDescription() (Text with Read More toggle)
+                            ├── _buildHowToDo() (ListView of numbered step cards: Step number, Instruction Text)
+                            ├── _buildRepsSelector() (Custom repetition slider/picker)
+                            └── _buildSaveButton()
+                                └── ElevatedButton ('Save')
+                                    └── Navigator.pop(context)
+
+
+Workout Progress Screen (`screens/workout/workout_progress_screen.dart`)
+└── WorkoutProgressScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── _buildHeader()
+                │   └── Row
+                │       ├── GestureDetector Back [Navigator.pop]
+                │       ├── Text (workout name)
+                │       └── Container (More icon)
+                ├── Progress counter
+                │   └── Column (Row: 'Exercise X of Y', LinearProgressIndicator)
+                ├── Expanded
+                │   └── SingleChildScrollView
+                │       └── Column
+                │           ├── _buildExerciseCard()
+                │           │   └── Container
+                │           │       └── Column
+                │           │           ├── Image.asset (Exercise illustration)
+                │           │           └── Row
+                │           │               ├── Text (Exercise Name)
+                │           │               └── GestureDetector (Info Icon)
+                │           │                   └── Navigate (push) -> ExerciseDetailsScreen
+                │           └── _buildHowToDoSection() (Numbered instruction steps)
+                └── _buildBottomButtons()
+                    └── Row
+                        ├── [if currentIndex > 0: OutlinedButton ('Previous')]
+                        └── Expanded
+                            └── ElevatedButton ('Next Exercise' / 'Complete Workout')
+                                └── [if last exercise: Navigate (pushAndRemoveUntil) -> WorkoutCompletedScreen | else: next index]
+
+
+Workout Completed Screen (`screens/workout/workout_completed_screen.dart`)
+└── WorkoutCompletedScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── Spacer
+                ├── SizedBox (Illustration area)
+                │   └── Stack
+                │       ├── Positioned -> CustomPaint (_CongratsBlobPainter)
+                │       └── Image.asset ('assets/images/Frame (2).png')
+                ├── Text ('Congratulations, You Have Finished Your Workout')
+                ├── Text (Motivational quote)
+                ├── Spacer
+                └── SizedBox
+                    └── DecoratedBox (LinearGradient)
+                        └── ElevatedButton ('Back To Home')
+                            └── Navigate (pushAndRemoveUntil) -> MainNavScreen
+
+
+==============================================================================
+4. SLEEP TRACKER SUBSYSTEM
+==============================================================================
+
+Sleep Tracker Screen (`screens/sleep/sleep_tracker_screen.dart`)
+└── SleepTrackerScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── _buildHeader()
+                │   └── Row
+                │       ├── GestureDetector Back [Navigator.pop]
+                │       ├── Text ('Sleep Tracker')
+                │       └── Container (More icon)
+                └── Expanded
+                    └── SingleChildScrollView
+                        └── Column
+                            ├── _buildWeeklyChart() (Container -> LineChart of sleep duration)
+                            ├── _buildLastNightCard() (Container -> Row: Sleep duration Text, Image illustration)
+                            ├── _buildDailyScheduleRow()
+                            │   └── Container -> Row
+                            │       ├── Text ('Daily Sleep Schedule')
+                            │       └── TextButton ('Check')
+                            │           └── Navigate (push) -> SleepScheduleScreen
+                            ├── Text ("Today's Schedule")
+                            ├── _buildTodaySchedule()
+                            │   └── Column of scheduled alarms
+                            │       └── GestureDetector
+                            │           ├── Navigate (push) -> AlarmRingingScreen
+                            │           └── Container -> Row (Bedtime / Alarm Icon, Title & Time, Switch)
+                            ├── Text ('Sleep Summary')
+                            ├── _buildSleepSummary() (Grid of sleep stat cards)
+                            ├── Text ('Sleep Goal')
+                            ├── _buildSleepGoal() (Target vs Actual sleep card)
+                            ├── Text ('Sleep Quality')
+                            ├── _buildSleepQuality() (Circular quality meter)
+                            └── _buildMarkCompleteSection() (ElevatedButton 'Mark Sleep as Completed')
+
+
+Sleep Schedule Screen (`screens/sleep/sleep_schedule_screen.dart`)
+└── SleepScheduleScreen
+    └── Scaffold
+        ├── body: SafeArea
+        │   └── Column
+        │       ├── _buildHeader()
+        │       │   └── Row
+        │       │       ├── GestureDetector Back [Navigator.pop]
+        │       │       ├── Text ('Sleep Schedule')
+        │       │       └── Container (More icon)
+        │       └── Expanded
+        │           └── SingleChildScrollView
+        │               └── Column
+        │                   ├── _buildIdealHoursBanner() (Container: Text ideal sleep duration, illustration)
+        │                   ├── Text ('Your Schedule')
+        │                   ├── _buildDateRow() (ListView of horizontal date chips)
+        │                   ├── _buildScheduleList()
+        │                   │   └── Column of sleep alarms
+        │                   │       └── GestureDetector
+        │                   │           ├── Navigate (push) -> AlarmRingingScreen
+        │                   │           └── Container -> Row (Icon, Title, Time, Repeat days, Switch)
+        │                   └── [if sleepScheduleList.isNotEmpty: _buildTonightSummary() (Summary Card)]
+        └── floatingActionButton: FloatingActionButton ('+')
+            └── Navigate (push) -> AddSleepAlarmScreen
+
+
+Add Sleep Alarm Screen (`screens/sleep/add_sleep_alarm_screen.dart`)
+└── AddSleepAlarmScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── _buildHeader()
+                │   └── Row
+                │       ├── GestureDetector Back [Navigator.pop]
+                │       ├── Text ('Add Alarm')
+                │       └── Container (More icon)
+                └── Expanded
+                    └── SingleChildScrollView
+                        └── Column
+                            ├── _buildBedtimeSection() (Row: Bed icon, Text 'Bedtime', Time picker)
+                            ├── _buildHoursOfSleepSection() (Row: Moon icon, Text 'Hours of sleep', Counter buttons)
+                            ├── _buildRowOption ('Repeat') (Row: Repeat icon, selected repeat option)
+                            ├── [if _repeat == 'Custom': _buildCustomDays() (Row of weekday chips)]
+                            ├── _buildToggleOption ('Vibrate When Alarm Sounds') (Row: Icon, Text, Switch)
+                            ├── _buildRowOption ('Alarm Label') (Row: Label icon, Text label)
+                            ├── _buildRowOption ('Sound') (Row: Music icon, selected sound)
+                            ├── _buildWakeUpPreview() (Container previewing calculated wake up time)
+                            └── _buildAddButton()
+                                └── ElevatedButton ('Add')
+                                    └── Navigator.pop(context)
+
+
+Alarm Ringing Screen (`screens/sleep/alarm_ringing_screen.dart`)
+└── AlarmRingingScreen
+    └── Scaffold
+        └── SafeArea
+            └── Center
+                └── SingleChildScrollView
+                    └── Column
+                        ├── ScaleTransition (Pulsing animation)
+                        │   └── Container (Circle gradient)
+                        │       └── Icon (Icons.alarm)
+                        ├── Text ('Good Morning!')
+                        ├── Text (Alarm Label)
+                        ├── Text (Alarm Time, large font)
+                        ├── _buildAudioStatus() (Row: Icon & Text showing audio / vibration mode)
+                        ├── _buildStopButton()
+                        │   └── ElevatedButton ('STOP ALARM')
+                        │       └── Navigator.pop(context)
+                        └── _buildSnoozeButton()
+                            └── OutlinedButton ('Snooze (5 min)')
+                                └── Navigator.pop(context)
+
+
+==============================================================================
+5. MEAL PLANNER SUBSYSTEM
+==============================================================================
+
+Meal Planner Screen (`screens/meal/meal_planner_screen.dart`)
+└── MealPlannerScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── _buildHeader()
+                │   └── Row
+                │       ├── GestureDetector Back [Navigator.pop]
+                │       ├── Text ('Meal Planner')
+                │       └── Container (More icon)
+                └── Expanded
+                    └── SingleChildScrollView
+                        └── Column
+                            ├── _buildNutritionChart() (Container -> BarChart of calories per day)
+                            ├── _buildDailyScheduleCard()
+                            │   └── Container -> Row
+                            │       ├── Text ('Daily Meal Schedule')
+                            │       └── TextButton ('Check')
+                            │           └── Navigate (push) -> MealScheduleScreen
+                            ├── _buildTodayMealsSection() (Summary of breakfast, lunch, dinner planned today)
+                            ├── _buildSearchField() (TextField for meal search)
+                            ├── Text ('Categories')
+                            ├── _buildCategoryChips() (ListView of category chips: Breakfast, Lunch, Dinner, etc.)
+                            ├── Text ('Recommendation for Diet')
+                            ├── _buildMealList()
+                            │   └── Column of recommended meal cards
+                            │       └── GestureDetector
+                            │           ├── Navigate (push) -> MealDetailsScreen
+                            │           └── Container -> Row (Image, Column: Name, Calorie, Level, Icon arrow)
+                            ├── Text ('Popular Meals')
+                            └── _buildPopularMeals()
+                                └── Column of popular meal cards
+                                    └── GestureDetector
+                                        ├── Navigate (push) -> MealDetailsScreen
+                                        └── Container -> Row (Image, Column: Name, Calorie, Level, 'View' button)
+
+
+Meal Details Screen (`screens/meal/meal_details_screen.dart`)
+└── MealDetailsScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── _buildHeader()
+                │   └── Row
+                │       ├── GestureDetector Back [Navigator.pop]
+                │       ├── Text ('Meal Details')
+                │       └── Container (More icon)
+                ├── Expanded
+                │   └── SingleChildScrollView
+                │       └── Column
+                │           ├── _buildMealImage() (Image.asset or Image placeholder)
+                │           ├── _buildMealTitle() (Row: Meal Name, Favorite Icon, Subtitle)
+                │           ├── Text ('Nutrition')
+                │           ├── _buildNutritionChips() (Row: Calories, Carbs, Protein, Fat chips)
+                │           ├── Text ('Description')
+                │           ├── Text (Meal description)
+                │           ├── Text ('Ingredients That You Will Need')
+                │           ├── _buildIngredientsList() (Horizontal ListView of ingredient cards)
+                │           ├── Text ('Step by Step')
+                │           └── _buildCookingSteps() (Numbered step cards)
+                └── _buildAddToScheduleButton()
+                    └── ElevatedButton ('Add to Daily Meal Schedule')
+                        └── Navigate (push) -> AddMealScheduleScreen
+
+
+Meal Schedule Screen (`screens/meal/meal_schedule_screen.dart`)
+└── MealScheduleScreen
+    └── Scaffold
+        ├── body: SafeArea
+        │   └── Column
+        │       ├── _buildHeader()
+        │       │   └── Row
+        │       │       ├── GestureDetector Back [Navigator.pop]
+        │       │       ├── Text ('Meal Schedule')
+        │       │       └── Container (More icon)
+        │       └── Expanded
+        │           └── SingleChildScrollView
+        │               └── Column
+        │                   ├── _buildMonthNavigator() (Row: Previous, Month Text, Next)
+        │                   ├── _buildDateRow() (ListView of horizontal date chips)
+        │                   ├── _buildMealSections() (Grouped lists: Breakfast, Lunch, Dinner, Snacks)
+        │                   │   └── Column of meal entries
+        │                   │       └── GestureDetector
+        │                   │           ├── Navigate (push) -> MealScheduleDetailsScreen
+        │                   │           └── Container -> Row (Icon, Title, Time, Calories, Icon arrow)
+        │                   └── _buildNutritionSummary() (Card with Total Calories & Protein for the day)
+        └── floatingActionButton: FloatingActionButton ('+')
+            └── Navigator.pop(context) (Returns to Meal Planner to pick a meal)
+
+
+Meal Schedule Details Screen (`screens/meal/meal_schedule_details_screen.dart`)
+└── MealScheduleDetailsScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── _buildHeader()
+                │   └── Row
+                │       ├── GestureDetector Back [Navigator.pop]
+                │       ├── Text ('Meal Schedule')
+                │       └── SizedBox
+                └── Expanded
+                    └── SingleChildScrollView
+                        └── Padding
+                            └── Column
+                                ├── _buildMealIcon() (Circle Container with meal category icon)
+                                ├── Text (Meal Name)
+                                ├── Text (Date and Time label)
+                                ├── Container (Meal Type tag)
+                                ├── _buildNutritionGrid() (2x2 grid of nutrition boxes: Calories, Carbs, Protein, Fat)
+                                ├── _buildStatusCard() (Container showing 'Scheduled' or 'Completed')
+                                └── [if !completed: ElevatedButton ('Mark as Done')]
+                                    [else: Container ('Completed' badge)]
+
+
+Add Meal Schedule Screen (`screens/meal/add_meal_schedule_screen.dart`)
+└── AddMealScheduleScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── _buildHeader()
+                │   └── Row
+                │       ├── GestureDetector Back [Navigator.pop]
+                │       ├── Text ('Add To Schedule')
+                │       └── SizedBox
+                └── Expanded
+                    └── SingleChildScrollView
+                        └── Padding
+                            └── Column
+                                ├── _buildMealPreviewCard() (Row: Meal Icon, Name, Nutrition info)
+                                ├── Text ('Meal Type')
+                                ├── _buildMealTypeSelector() (Row of ChoiceChips: Breakfast, Lunch, Dinner, Snack)
+                                ├── Text ('Date')
+                                ├── _buildDateSelector() (InkWell -> Row: Calendar icon, Date text, Date picker)
+                                ├── Text ('Time')
+                                ├── _buildTimeSelector() (InkWell -> Row: Clock icon, Time text, Time picker)
+                                ├── _buildSummaryCard() (Summary preview container)
+                                └── _buildSaveButton()
+                                    └── ElevatedButton ('Save to Schedule')
+                                        └── Navigator.pop(context)
+
+
+==============================================================================
+6. PROGRESS TRACKER SUBSYSTEM
+==============================================================================
+
+Progress Photo Gallery Screen (`screens/progress/progress_photo_screen.dart`)
+└── ProgressPhotoScreen
+    └── Scaffold
+        ├── body: SafeArea
+        │   └── Column
+        │       ├── _buildHeader()
+        │       │   └── Row
+        │       │       ├── GestureDetector Back [Navigator.pop]
+        │       │       ├── Text ('Progress Photo')
+        │       │       └── Container (More icon)
+        │       └── Expanded
+        │           └── SingleChildScrollView
+        │               └── Column
+        │                   ├── _buildInfoCard() (Container: Camera icon, Title, Description)
+        │                   ├── Text ('Compare My Photo')
+        │                   ├── _buildCompareButton()
+        │                   │   └── GestureDetector
+        │                   │       ├── Navigate (push) -> ProgressComparisonScreen
+        │                   │       └── Container -> Row (Text 'Compare My Photo', Icon arrow)
+        │                   ├── Text ('Gallery')
+        │                   └── _buildPhotoGrid() (GridView of progress photo cards with date tags)
+        └── floatingActionButton: FloatingActionButton (Camera Icon)
+            └── Navigate (push) -> TakeProgressPhotoScreen
+
+
+Take Progress Photo Screen (`screens/progress/take_progress_photo_screen.dart`)
+└── TakeProgressPhotoScreen
+    └── Scaffold
+        └── SafeArea
+            └── Stack
+                ├── Fullscreen Camera Preview / Placeholder
+                ├── Positioned Header
+                │   └── Row
+                │       ├── GestureDetector Back [Navigator.pop]
+                │       ├── Text ('Take Photo')
+                │       └── Container (More icon)
+                └── Positioned Bottom Controls
+                    └── Container (Gradient overlay)
+                        └── Row
+                            ├── Cancel button (GestureDetector [Navigator.pop])
+                            ├── Capture Shutter button (GestureDetector)
+                            │   └── Navigate (push) -> ProgressPhotoPreviewScreen
+                            └── Gallery button (GestureDetector)
+                                └── showModalBottomSheet (_GalleryPickerSheet)
+                                    └── GridView of gallery photos
+                                        └── GestureDetector
+                                            └── Navigate (push) -> ProgressPhotoPreviewScreen
+
+
+Progress Photo Preview Screen (`screens/progress/progress_photo_preview_screen.dart`)
+└── ProgressPhotoPreviewScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── _buildHeader()
+                │   └── Row
+                │       ├── GestureDetector Back [Navigator.pop]
+                │       ├── Text ('Progress Photo Preview')
+                │       └── SizedBox
+                └── Expanded
+                    └── SingleChildScrollView
+                        └── Column
+                            ├── Text ('Progress Photo')
+                            ├── Text (suggestedDate)
+                            ├── Photo preview card (Container -> ClipRRect -> Image.asset)
+                            ├── Retake button
+                            │   └── GestureDetector
+                            │       └── Navigator.pop(context)
+                            └── Save button
+                                └── GestureDetector
+                                    └── Navigator.pop(context) twice (Returns to gallery)
+
+
+Progress Comparison Screen (`screens/progress/progress_comparison_screen.dart`)
+└── ProgressComparisonScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── _buildHeader()
+                │   └── Row
+                │       ├── GestureDetector Back [Navigator.pop]
+                │       ├── Text ('Comparison')
+                │       └── Container (More icon)
+                └── Expanded
+                    └── SingleChildScrollView
+                        └── Column
+                            ├── _buildTopIllustration()
+                            │   └── Container -> Row
+                            │       ├── _buildPhotoPlaceholder (Photo 1 / Before)
+                            │       ├── Container ('VS')
+                            │       └── _buildPhotoPlaceholder (Photo 2 / After)
+                            ├── Text ('Select 2 photos to compare')
+                            ├── _buildSelectorCard (Slot 1 picker -> opens _PhotoPickerSheet)
+                            ├── _buildSelectorCard (Slot 2 picker -> opens _PhotoPickerSheet)
+                            └── _buildCompareButton()
+                                └── [if bothSelected: ElevatedButton ('Compare') -> Navigate (push) -> ProgressResultScreen]
+                                    [else: Disabled Button with guidance text]
+
+
+Progress Result Screen (`screens/progress/progress_result_screen.dart`)
+└── ProgressResultScreen
+    └── Scaffold
+        └── SafeArea
+            └── Column
+                ├── _buildHeader()
+                │   └── Row
+                │       ├── GestureDetector Back [Navigator.pop]
+                │       ├── Text ('Result')
+                │       └── Container (More icon)
+                ├── _buildTabBar() (TabBar: 'Photo' tab, 'Statistics' tab)
+                └── Expanded
+                    └── TabBarView
+                        ├── _buildPhotoTab()
+                        │   └── SingleChildScrollView
+                        │       └── Column
+                        │           ├── Row (Date label 1, Date label 2)
+                        │           ├── Interactive comparison viewer (Before & After photos with slider / toggle)
+                        │           └── Month / category chips
+                        └── _buildStatisticsTab()
+                            └── SingleChildScrollView
+                                └── Column
+                                    ├── Average progress card (Container -> BarChart)
+                                    └── Column of metric changes (Chest, Waist, Arm, etc. with +/- percentages)

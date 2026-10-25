@@ -1,0 +1,724 @@
+﻿================================================================================
+        FITNESTX - FLUTTER FITNESS APP
+        PROJECT PRESENTATION EXPLANATION
+        (Beginner-Friendly | Hinglish mein samjhaya gaya hai)
+================================================================================
+
+NOTE: Yeh file sirf presentation ke liye hai. App ka koi bhi code change
+      nahi kiya gaya hai. Sirf samjhane ke liye likha gaya hai.
+
+================================================================================
+                        APP KA NAAM AUR PURPOSE
+================================================================================
+
+App Name   : FitnestX
+Tagline    : "Everybody Can Train"
+Platform   : Flutter (Android + iOS + Web/Desktop)
+Language   : Dart (Flutter framework)
+
+Purpose    : Yeh ek fitness tracking app hai jisme user apna workout,
+             meals, sleep, aur overall health progress track kar sakta hai.
+
+App Color  : Purple-Blue Gradient (#92A3FD => #9DCEFF)
+             Yeh gradient poori app mein consistent use hua hai -
+             buttons, cards, icons sab jagah.
+
+================================================================================
+                       SCREEN SEQUENCE (Navigation Order)
+================================================================================
+
+Jab app open hoti hai, user in screens se guzarta hai iss order mein:
+
+  [1] Welcome Screen
+      | "Get Started" button press karo
+  [2] Onboarding Screen (4 pages)
+      | Last page pe "Check" button press karo
+  [3] Register Screen (Sign Up)
+      | Form fill karo, "Register" press karo
+  [4] Profile Setup Screen
+      | Gender, DOB, Weight, Height bhar ke "Next >" press karo
+  [5] Goal Selection Screen
+      | Apna goal swipe karke "Confirm" press karo
+  [6] Success Screen (Welcome Message)
+      | "Go To Home" button press karo
+  [7] Main Dashboard (Home Screen) - YEH HAI MAIN APP
+      | Bottom Nav bar se dusre tabs mein jao
+      |-- [8]  Activity Tracker Tab
+      |-- [9]  Camera Tab (Progress Photos)
+      |-- [10] Profile Tab (User Settings)
+      | Dashboard ke andar se navigate karo
+      |-- [11] Notification Screen
+      |-- [12] Workout Tracker Screen
+      |         |-- [13] Workout Details Screen
+      |         |         |-- [14] Exercise Details Screen
+      |         |                   |-- [15] Workout Completed Screen
+      |         |-- [16] Workout Schedule Screen
+      |                   |-- [17] Workout Schedule Details Screen
+      |                             |-- [18] Add Workout Schedule Screen
+      |-- [19] Meal Planner Screen
+      |         |-- [20] Meal Details Screen
+      |         |-- [21] Meal Schedule Screen
+      |                   |-- [22] Meal Schedule Details Screen
+      |                             |-- [23] Add Meal Schedule Screen
+      |-- [24] Sleep Tracker Screen
+      |         |-- [25] Sleep Schedule Screen
+      |         |         |-- [26] Add Sleep Alarm Screen
+      |         |-- [27] Alarm Ringing Screen
+      |-- [28] Progress Photo Screen
+                |-- [29] Take Progress Photo Screen
+                |-- [30] Progress Photo Preview Screen
+                |-- [31] Progress Comparison Screen
+                |-- [32] Progress Result Screen
+
+  ALSO: Login Screen accessible hai Register Screen se ("Already have account?")
+        Login ke baad: Success Screen => Dashboard
+
+================================================================================
+  SCREEN 1 - WELCOME SCREEN
+  File: lib/screens/welcome_screen.dart
+  Class: WelcomeScreen
+================================================================================
+
+Yeh pehli screen hai jo app open karte hi dikhti hai.
+
+KYA DIKHTA HAI:
+  - Full screen purple-blue gradient background
+  - Center mein app ka naam: "FitnestX" (bold white text)
+  - Neeche subtitle: "Everybody Can Train" (light white text)
+  - Sabse neeche ek white button: "Get Started"
+
+YEH SCREEN KAISE KAAM KARTI HAI:
+  - main.dart mein WelcomeScreen ko pehli screen set kiya gaya hai
+  - "Get Started" button press karte hi user OnboardingScreen par jaata hai
+  - Navigator.pushReplacement use kiya gaya hai - matlab peeche jaane par
+    Welcome Screen nahi aayegi (stack se hata di jaati hai)
+
+IMPORTANT WIDGETS:
+  Scaffold => Container (gradient background) => SafeArea
+    => Column
+        => Spacer (upar ki jagah ke liye)
+        => RichText ("FitnestX" - 'X' bold alag style mein)
+        => Text ("Everybody Can Train")
+        => Spacer (beech ki jagah ke liye)
+        => ElevatedButton ("Get Started")
+        => SizedBox (neeche ki padding)
+
+NAVIGATION CODE:
+  Navigator.of(context).pushReplacement(
+    MaterialPageRoute(builder: (_) => const OnboardingScreen()),
+  );
+
+================================================================================
+  SCREEN 2 - ONBOARDING SCREEN (4 Pages / Slides)
+  File: lib/screens/onboarding_screen.dart
+  Class: OnboardingScreen
+================================================================================
+
+Yeh ek 4-page swipeable tutorial hai. Pehli baar user ko app ke features
+dikhaye jaate hain.
+
+4 ONBOARDING PAGES:
+  Page 1: "Track Your Goal"    - Image: onboarding1.png
+  Page 2: "Get Burn"           - Image: onboarding2.png
+  Page 3: "Eat Well"           - Image: onbaording3.png
+  Page 4: "Improve Sleep Quality" - Image: onboarding4.png
+
+KYA DIKHTA HAI:
+  - Bada image upar
+  - Title aur description text neeche
+  - Bottom bar: dot indicators (active dot bada hota hai - 30px vs 10px)
+  - Right side: circular arrow button (last page pe check mark)
+
+HOW IT WORKS:
+  1. PageController se pages control hote hain
+  2. Dots animated hain - AnimatedContainer: 300ms duration
+  3. Last page par arrow check icon mein badal jaata hai
+  4. Check press => RegisterScreen
+
+NAVIGATION CODE:
+  Navigator.pushReplacement(context,
+    MaterialPageRoute(builder: (_) => const RegisterScreen()));
+
+================================================================================
+  SCREEN 3 - REGISTER SCREEN (Sign Up)
+  File: lib/screens/register_screen.dart
+  Class: RegisterScreen
+================================================================================
+
+FORM FIELDS:
+  1. First Name (icon: person, required)
+  2. Last Name  (icon: person, required)
+  3. Email      (icon: email, must have @ and .)
+  4. Password   (icon: lock, min 6 chars, eye toggle for show/hide)
+
+PRIVACY POLICY CHECKBOX:
+  "By continuing you accept our Privacy Policy and Term of Use"
+  Tick nahi ki => red SnackBar: "Please accept the Privacy Policy to continue"
+
+REGISTER BUTTON (gradient purple-blue):
+  Press => ProfileScreen
+
+SOCIAL BUTTONS: Google + Facebook icons (sirf UI, koi functionality nahi)
+
+LOGIN LINK: "Already have an account? Login" => LoginScreen
+
+================================================================================
+  SCREEN 4 - PROFILE SETUP SCREEN
+  File: lib/screens/profile_screen.dart
+  Class: ProfileScreen
+================================================================================
+
+FIELDS:
+  1. Gender     => Dropdown (Male / Female / Other)
+  2. Date of Birth => Tap to open date picker (1950 to today)
+  3. Your Weight => Number input + "KG" gradient badge
+  4. Your Height => Number input + "CM" gradient badge
+
+IMAGE: Decorative image at top (Mask Group.png) - 250px height
+
+VALIDATION:
+  - Gender not selected   => "Please select your gender"
+  - DOB empty            => "Please select your date of birth"
+  - Weight invalid       => "Please enter a valid weight"
+  - Height invalid       => "Please enter a valid height"
+
+NEXT BUTTON: "Next >" => GoalScreen
+
+================================================================================
+  SCREEN 5 - GOAL SELECTION SCREEN
+  File: lib/screens/goal_screen.dart
+  Class: GoalScreen
+================================================================================
+
+3 GOALS (Swipeable using PageView):
+  - Improve Shape  (Card-Goals-2.png)
+  - Lean and Tone  (Card-Goals-2 (1).png)
+  - Lose a Fat     (Card-Goals-2 (2).png)
+
+- Dot indicators below show current goal
+- "Confirm" button => pushAndRemoveUntil => SuccessScreen
+  (pushAndRemoveUntil means: all previous screens are removed from stack)
+
+================================================================================
+  SCREEN 6 - SUCCESS SCREEN (Welcome Message)
+  File: lib/screens/success_screen.dart
+  Class: SuccessScreen
+================================================================================
+
+KYA DIKHTA HAI:
+  - Center mein blob shape (custom drawn with CustomPaint + bezier curves)
+    Gradient: #B6C4FF => #92A3FD => #9DCEFF
+  - Illustration image on top (Group.png)
+  - "Welcome, TukaRam" bold text
+  - "You are all set now, let's reach your goals together with us"
+  - "Go To Home" button
+
+NAVIGATION: pushAndRemoveUntil => MainNavScreen
+  (Saari pehli screens hata ke seedha Dashboard par le jaata hai)
+
+================================================================================
+  SCREEN 7 - LOGIN SCREEN
+  File: lib/screens/login_screen.dart
+  Class: LoginScreen
+================================================================================
+
+NOTE: Register Screen se accessible - "Already have account? Login"
+
+FORM FIELDS:
+  1. Email    (icon: email)
+  2. Password (icon: lock, eye toggle)
+
+EXTRAS:
+  - "Forgot your password?" underlined text (UI only, no functionality)
+  - Social buttons: Google + Facebook (UI only)
+  - "Don't have an account? Register" => RegisterScreen
+
+LOGIN BUTTON: validates form => pushAndRemoveUntil => SuccessScreen
+
+================================================================================
+  SCREEN 8 - MAIN DASHBOARD (Home Screen)    <<< SABSE IMPORTANT SCREEN >>>
+  File: lib/screens/home_screen.dart
+  Class: HomeScreen
+================================================================================
+
+Yeh app ka main dashboard hai. Login/Registration ke baad dikhta hai.
+MainNavScreen ke andar pehla tab (index 0) hai.
+
+DASHBOARD KA STRUCTURE (Upar se Neeche scroll karo):
+
+  ---- SECTION 1: HEADER ----
+  Left:
+    - "Welcome Back," (small grey text)
+    - "TukaRam" (bold, username)
+  Right:
+    - Bell icon button => NotificationScreen
+    - Avatar box (gradient, first letter "T")
+
+  ---- SECTION 2: BMI CARD ----
+  Full-width gradient card (purple)
+  Left:
+    - "BMI (Body Mass Index)" heading
+    - "You have a Normal weight" (dynamic based on BMI value)
+    - "View More" small white button
+  Right:
+    - CircularProgressIndicator (value = BMI/40)
+    - "20.1" text in center
+
+  BMI Logic:
+    < 18.5  => "Underweight"
+    18.5-25 => "Normal"
+    25-30   => "Overweight"
+    > 30    => "Obese"
+
+  ---- SECTION 3: TODAY TARGET ----
+  Light blue card | "Today Target" text | "Check" button
+
+  ---- SECTION 4: ACTIVITY STATUS ----
+  "Activity Status" heading + 4 sub-cards:
+
+  Card A: Heart Rate (full width)
+    - "78 BPM" red badge
+    - LineChart - smooth wave (fl_chart library)
+
+  Card B: Water Intake (half width - left)
+    - "4 Liters" value
+    - 6 horizontal progress bars for time slots
+
+  Card C: Sleep (half width - right)
+    - "8h 20m" value
+    - Vertical bar chart (7 days)
+
+  Card D: Calories (full width)
+    - "760 kCal"
+    - Horizontal progress bar (760/900 = ~84%)
+
+  ---- SECTION 5: WORKOUT PROGRESS ----
+  - BarChart (weekly data, Sun-Sat)
+  - Active bar highlighted in gradient
+  - Total: "5,540 kCal"
+
+  ---- SECTION 6: LATEST WORKOUTS ----
+  "Latest Workout" heading + "See more" link
+  3 workout cards:
+    1. Fullbody Workout  - 180 Cal | 30min - Completed (blue check)
+    2. Lowerbody Workout - 150 Cal | 25min - Not done (grey)
+    3. Ab Workout        - 120 Cal | 20min - Not done (grey)
+  Tap any => WorkoutTrackerScreen
+
+  ---- SECTION 7: MEAL PLANNER CARD ----
+  Tap => MealPlannerScreen
+
+  ---- SECTION 8: SLEEP TRACKER CARD ----
+  Tap => SleepTrackerScreen
+
+  ---- SECTION 9: PROGRESS TRACKER CARD ----
+  Tap => ProgressPhotoScreen
+
+DASHBOARD DATA (all hardcoded / dummy):
+  Username     : 'TukaRam'
+  BMI          : 20.1 (Normal)
+  Heart Rate   : 78 BPM
+  Water Intake : 4 Liters
+  Sleep        : 8h 20m
+  Calories     : 760 kCal (target: 900)
+
+================================================================================
+  SCREEN 9 - MAIN NAVIGATION SHELL
+  File: lib/screens/main_nav_screen.dart
+  Class: MainNavScreen
+================================================================================
+
+Yeh wrapper screen hai jo bottom navigation bar manage karti hai.
+
+BOTTOM NAV BAR (5 items):
+  Index 0: Home    => HomeScreen
+  Index 1: Activity => ActivityTrackerScreen
+  Center: + (Plus) => Quick Add Bottom Sheet
+  Index 2: Camera  => _SearchPlaceholderScreen (Progress Photos)
+  Index 3: Profile => UserProfileScreen
+
+PLUS BUTTON popup items: Workout | Meal | Water | Sleep (UI only)
+
+IndexedStack: Saari 4 screens memory mein ek saath rahti hain.
+              Tab switch par state preserve rehti hai.
+
+================================================================================
+  SCREEN 10 - ACTIVITY TRACKER SCREEN
+  File: lib/screens/activity_tracker_screen.dart
+  Class: ActivityTrackerScreen
+================================================================================
+
+KYA DIKHTA HAI:
+  - Header: back arrow | "Activity Tracker" title | more icon
+  - Today Target section
+  - Activity Progress charts
+  - Latest Activities list:
+      Fullbody Workout  (30 min, 180 cal)
+      Lowerbody Workout (25 min, 150 cal)
+      Ab Workout        (20 min, 120 cal)
+
+================================================================================
+  SCREEN 11 - USER PROFILE SCREEN
+  File: lib/screens/user_profile_screen.dart
+  Class: UserProfileScreen
+================================================================================
+
+Bottom Nav - Profile tab (index 3)
+
+KYA DIKHTA HAI:
+  - Header: "Profile" (centered)
+  - Profile Card: Avatar + Name "TukaRam" + edit button
+  - Stats Row: Height: 180cm | Weight: 65kg | Age: 22
+  - Account Section: Personal Data, Achievement, Activity History, Workout Progress
+  - Notification Section: Pop-up Notification toggle (on/off)
+  - Other Section: Contact Us, Privacy Policy, Settings
+  - Logout => WelcomeScreen (pushAndRemoveUntil)
+
+================================================================================
+  SCREEN 12 - NOTIFICATION SCREEN
+  File: lib/screens/notification_screen.dart
+  Class: NotificationScreen
+================================================================================
+
+4 dummy notifications:
+  1. "Hey, it's time for lunch"              - 1 minute ago (unread)
+  2. "Don't miss your Lowerbody Workout"     - 3 hours ago (unread)
+  3. "Congratulations, You finished Upperbody" - 29 May (read)
+  4. "Let's add some meals for your target" - 8 April (read)
+
+================================================================================
+  SCREEN 13 - WORKOUT TRACKER SCREEN
+  File: lib/screens/workout/workout_tracker_screen.dart
+  Class: WorkoutTrackerScreen
+================================================================================
+
+SECTIONS:
+  1. Header: back | "Workout Tracker" | settings
+  2. Weekly Bar Chart (fl_chart BarChart, Sun-Sat)
+  3. Schedule Row: "Workout Schedule" + Check => WorkoutScheduleScreen
+  4. Daily Schedule Row (time + workout name)
+  5. Upcoming Workouts:
+       - Fullbody Workout  | Today 09:00am (enabled) => WorkoutDetailsScreen
+       - Lowerbody Workout | June 09 10:30pm (disabled)
+  6. "What Do You Want To Train" Grid:
+       Fullbody, Lowerbody, Upperbody, Abs, Yoga, etc.
+       Tap => WorkoutDetailsScreen for that category
+
+================================================================================
+  SCREEN 14-18 - WORKOUT SUB-SCREENS
+================================================================================
+
+  WorkoutDetailsScreen       (workout_details_screen.dart):
+    - Workout name, difficulty, duration, calories
+    - Exercise list (name, sets x reps)
+    - "Start Workout" => ExerciseDetailsScreen
+
+  ExerciseDetailsScreen      (exercise_details_screen.dart):
+    - Exercise name + image/GIF
+    - Instructions, sets/reps
+    - "Next" => next exercise or WorkoutCompletedScreen
+
+  WorkoutCompletedScreen     (workout_completed_screen.dart):
+    - Congratulations screen
+    - Calories burned, duration
+    - "Back to Home" button
+
+  WorkoutScheduleScreen      (workout_schedule_screen.dart):
+    - Weekly schedule (Mon-Sun tabs)
+    - Scheduled workouts per day
+    - Tap => WorkoutScheduleDetailsScreen
+
+  WorkoutScheduleDetailsScreen (workout_schedule_details_screen.dart):
+    - One scheduled workout's details
+    - Edit/Add => AddWorkoutScheduleScreen
+
+  AddWorkoutScheduleScreen   (add_workout_schedule_screen.dart):
+    - Form: workout name, time picker, day selection, exercises
+    - Save button
+
+================================================================================
+  SCREEN 19 - MEAL PLANNER SCREEN
+  File: lib/screens/meal/meal_planner_screen.dart
+  Class: MealPlannerScreen
+================================================================================
+
+SECTIONS:
+  1. Header: back | "Meal Planner" | icon
+  2. Weekly Nutrition Chart (fl_chart BarChart, 7 days)
+  3. Today's Nutrition:
+       Calories: 1280 / 2000  | Protein: 72g / 120g
+       Carbs: 160g / 250g     | Fat: 42g / 65g
+       Fiber: 24g / 30g
+       (Each with progress bar)
+  4. Meal Schedule Row => MealScheduleScreen
+  5. Today's Meals list (from mealScheduleList)
+  6. Category Chips (horizontal scroll):
+       All, Breakfast, Lunch, Dinner, Snack, etc.
+  7. Search TextField (real-time filter by name/category)
+  8. Recommendation for Diet (meal cards)
+  9. Popular Meals (meal cards)
+  Each meal card tap => MealDetailsScreen
+
+STATE:
+  _selectedCategory: filter by category
+  _searchQuery: filter by search
+  _filteredMeals: computed getter (category + search combined)
+
+================================================================================
+  SCREEN 20-23 - MEAL SUB-SCREENS
+================================================================================
+
+  MealDetailsScreen       (meal_details_screen.dart):
+    - Meal image, name, category
+    - Nutrition: Calories, Protein, Carbs, Fat, Fiber
+    - Ingredients list + Preparation steps
+    - "Add to Today" button
+
+  MealScheduleScreen      (meal_schedule_screen.dart):
+    - Weekly meal plan (day tabs)
+    - Tap => MealScheduleDetailsScreen
+
+  MealScheduleDetailsScreen (meal_schedule_details_screen.dart):
+    - One day: Breakfast, Lunch, Dinner, Snacks
+    - => AddMealScheduleScreen
+
+  AddMealScheduleScreen   (add_meal_schedule_screen.dart):
+    - Select meal, set time, save
+
+================================================================================
+  SCREEN 24 - SLEEP TRACKER SCREEN
+  File: lib/screens/sleep/sleep_tracker_screen.dart
+  Class: SleepTrackerScreen
+================================================================================
+
+SECTIONS:
+  1. Header: back | "Sleep Tracker" | icon
+  2. Weekly Sleep Chart (fl_chart BarChart, Sun-Sat in hours)
+  3. Last Night Sleep Card: "8h 20m"
+  4. Daily Sleep Schedule Row => SleepScheduleScreen
+  5. Today's Schedule:
+       - Bedtime card (e.g., 09:00pm) with toggle switch
+       - Alarm card (e.g., 05:30am) with toggle switch
+  6. Sleep Summary (2x2 grid):
+       Average: 8h 20m | Target: 8 hours
+       Quality: Good   | Goal: 8.5 hours
+  7. Sleep Goal: progress bar (current vs target)
+  8. Sleep Quality Selector:
+       Poor | Average | Good | Excellent
+       Active option gets gradient highlight
+  9. Mark Sleep Complete button
+
+STATE:
+  _sleepQuality: String (default 'Good')
+  _sleepCompleted: bool (default false)
+
+================================================================================
+  SCREEN 25-27 - SLEEP SUB-SCREENS
+================================================================================
+
+  SleepScheduleScreen    (sleep_schedule_screen.dart):
+    - Bedtime + Wake up time management
+    - "+" => AddSleepAlarmScreen
+
+  AddSleepAlarmScreen    (add_sleep_alarm_screen.dart):
+    - Time picker, repeat days (Mon-Sun), label, Save
+
+  AlarmRingingScreen     (alarm_ringing_screen.dart):
+    - Alarm time display, ringing animation
+    - "Dismiss" and "Snooze" buttons
+
+================================================================================
+  SCREEN 28-32 - PROGRESS TRACKER SCREENS
+================================================================================
+
+  ProgressPhotoScreen         (progress_photo_screen.dart):
+    - Gallery of progress photos
+    - Before-After comparison button
+    - "+" => TakeProgressPhotoScreen
+
+  TakeProgressPhotoScreen     (take_progress_photo_screen.dart):
+    - Camera preview, capture button
+    - Weight/date input, Save => ProgressPhotoPreviewScreen
+
+  ProgressPhotoPreviewScreen  (progress_photo_preview_screen.dart):
+    - Preview photo before saving
+
+  ProgressComparisonScreen    (progress_comparison_screen.dart):
+    - 2 photos side by side (Before vs After)
+
+  ProgressResultScreen        (progress_result_screen.dart):
+    - Analysis: weight change, measurements
+
+================================================================================
+               SIGNUP / LOGIN - COMMON QUESTIONS AND ANSWERS
+================================================================================
+
+Q1: Kya app mein real authentication hai?
+A: Nahi. Koi backend nahi hai. Form validation sirf client-side hai.
+   Jo bhi valid email/password daloge, submit hone par direct success milega.
+   Real auth ke liye Firebase Auth ya REST API lagegi.
+
+Q2: Password store kahan hota hai?
+A: Abhi kahan bhi nahi. Koi database nahi hai.
+   Production mein Firebase ya secure backend use karenge.
+
+Q3: Form validation kaise kaam karta hai?
+A: Flutter ka Form widget + GlobalKey<FormState>.
+   validate() call par sabhi field validators run hote hain.
+   Fail hone par error text field ke neeche dikhti hai.
+
+Q4: Kya Google/Facebook buttons kaam karte hain?
+A: Nahi. Sirf UI hai. Future mein google_sign_in package se implement hoga.
+
+Q5: Register ke baad login karna padta hai?
+A: Nahi. Register => Profile => Goal => Success => Dashboard directly.
+
+Q6: "Forgot your password?" kaam karta hai?
+A: Nahi. Sirf underlined text hai. Backend ke bina implement nahi hoga.
+
+Q7: Profile setup mein weight/height kyun maanga?
+A: BMI calculate karne ke liye. BMI = weight(kg) / (height(m))^2
+   Note: Dashboard par BMI abhi hardcoded hai (20.1).
+
+Q8: Privacy Policy checkbox mandatory kyun hai?
+A: GDPR aur Play Store guidelines require user consent.
+   Code: agar _agreedToPolicy == false to SnackBar error dikhti hai.
+
+================================================================================
+                   FLUTTER WIDGETS - BEGINNER REFERENCE
+================================================================================
+
+WIDGET              | KYA KARTA HAI
+--------------------|---------------------------------------------------------
+MaterialApp         | Poori app ka root. Theme, title, home screen yahan.
+Scaffold            | Har screen ka base. AppBar, body, bottomNav iska part.
+SafeArea            | Content ko notch/camera/status bar se bachata hai.
+Column              | Widgets ko upar se neeche ek ke baad ek rakhta hai.
+Row                 | Widgets ko left se right side-by-side rakhta hai.
+Container           | Box - color, border, padding, size set kar sako.
+Text                | Sirf text dikhane ke liye.
+SizedBox            | Fixed size empty space. Gaps ke liye.
+Padding             | Widget ke bahar space dena.
+Expanded            | Available space poora leta hai (Row/Column mein).
+Spacer              | Remaining space fill karta hai (Column mein).
+ElevatedButton      | Raised button. onPressed se action.
+GestureDetector     | Kisi bhi widget ko tappable banata hai.
+TextField           | User se text input lene ke liye.
+Form                | TextFields ko group karta hai for validation.
+ListView            | Scrollable list of widgets.
+GridView            | Grid format mein widgets.
+PageView            | Swipeable pages (onboarding mein use hua).
+Stack               | Widgets ko ek dusre ke upar rakhta hai.
+Image.asset         | App ke assets folder se image dikhata hai.
+Icon                | Material icons (bell, home, person, etc.).
+Checkbox            | Tick karne wala box.
+Switch              | Toggle (on/off) switch.
+DropdownButton      | Dropdown menu.
+CircularProgressIndicator | Spinning/fill circle. Value se fill % set.
+LinearProgressIndicator   | Horizontal progress bar.
+SingleChildScrollView     | Content scroll ho jaye jab screen se bada ho.
+IndexedStack        | Multiple screens, ek waqt ek dikhata hai.
+AnimatedContainer   | Smoothly animate hota hai property change par.
+CustomPaint         | Canvas par khud se shapes draw karne ke liye.
+Navigator           | Screens ke beech navigate karne ke liye.
+MaterialPageRoute   | Ek screen se dusri screen ka route.
+SnackBar            | Bottom par temporarily dikhne wala message.
+showModalBottomSheet | Neeche se utha aane wala popup panel.
+showDatePicker      | Built-in date selection calendar dialog.
+
+NAVIGATION TYPES:
+  push()               - Naya screen add (back button kaam karta hai)
+  pushReplacement()    - Current screen replace (back nahi ja sakte)
+  pushAndRemoveUntil() - Sab pehle wali screens hata ke naya screen
+  pop()                - Current screen hata ke pichli par jao
+
+CHART LIBRARY: fl_chart (pub.dev/packages/fl_chart)
+  LineChart - Heart Rate wave graph
+  BarChart  - Weekly workout / sleep / nutrition bars
+
+================================================================================
+                          PROJECT FILES STRUCTURE
+================================================================================
+
+fitness_gym/
+|-- lib/
+|   |-- main.dart                          <- App ka entry point
+|   |-- screens/
+|   |   |-- welcome_screen.dart            <- Screen 1: Welcome
+|   |   |-- onboarding_screen.dart         <- Screen 2: 4-page Onboarding
+|   |   |-- register_screen.dart           <- Screen 3: Sign Up
+|   |   |-- profile_screen.dart            <- Screen 4: Profile setup
+|   |   |-- goal_screen.dart               <- Screen 5: Goal selection
+|   |   |-- success_screen.dart            <- Screen 6: Welcome message
+|   |   |-- login_screen.dart              <- Screen 7: Login
+|   |   |-- main_nav_screen.dart           <- Screen 9: Bottom navigation shell
+|   |   |-- home_screen.dart               <- Screen 8: MAIN DASHBOARD
+|   |   |-- activity_tracker_screen.dart   <- Screen 10: Activity tab
+|   |   |-- user_profile_screen.dart       <- Screen 11: Profile tab
+|   |   |-- notification_screen.dart       <- Screen 12: Notifications
+|   |   |-- workout/
+|   |   |   |-- workout_tracker_screen.dart
+|   |   |   |-- workout_details_screen.dart
+|   |   |   |-- exercise_details_screen.dart
+|   |   |   |-- workout_completed_screen.dart
+|   |   |   |-- workout_schedule_screen.dart
+|   |   |   |-- workout_schedule_details_screen.dart
+|   |   |   |-- add_workout_schedule_screen.dart
+|   |   |-- meal/
+|   |   |   |-- meal_planner_screen.dart
+|   |   |   |-- meal_details_screen.dart
+|   |   |   |-- meal_schedule_screen.dart
+|   |   |   |-- meal_schedule_details_screen.dart
+|   |   |   |-- add_meal_schedule_screen.dart
+|   |   |-- sleep/
+|   |   |   |-- sleep_tracker_screen.dart
+|   |   |   |-- sleep_schedule_screen.dart
+|   |   |   |-- add_sleep_alarm_screen.dart
+|   |   |   |-- alarm_ringing_screen.dart
+|   |   |-- progress/
+|   |       |-- progress_photo_screen.dart
+|   |       |-- take_progress_photo_screen.dart
+|   |       |-- progress_photo_preview_screen.dart
+|   |       |-- progress_comparison_screen.dart
+|   |       |-- progress_result_screen.dart
+|   |-- models/          <- Data models (workout, meal, sleep)
+|   |-- widgets/         <- Reusable custom widgets
+|   |-- resources/       <- Assets/constants
+|-- assets/
+|   |-- images/          <- All app images
+|-- pubspec.yaml         <- App dependencies
+
+================================================================================
+                    IMPORTANT NOTES FOR PRESENTATION
+================================================================================
+
+1. YEH APP PROTOTYPE HAI:
+   Koi real database nahi. Sab data hardcoded/dummy hai.
+   Production ke liye Firebase ya custom backend add karna hoga.
+
+2. COLOR PALETTE:
+   Primary   : #92A3FD (lavender blue)
+   Secondary : #9DCEFF (sky blue)
+   Text Dark : #1D1617 (near black)
+   Text Grey : #7B6F72 (muted grey)
+   BG Light  : #F7F8F8 (off white)
+   Card BG   : #E8F0FE (very light blue)
+
+3. STATE MANAGEMENT:
+   Sirf StatefulWidget + setState() use kiya gaya hai.
+   Koi Provider ya Riverpod nahi (simple local state only).
+
+4. PLATFORM:
+   Flutter cross-platform: Android, iOS, Web, Desktop - ek code.
+   main.dart mein _MobileFrame web/desktop par phone-jesa frame dikhata hai
+   (max width 420px, aspect ratio 9:19.5).
+
+5. LIBRARIES USED:
+   - fl_chart        => Charts (Line, Bar)
+   - flutter/material => UI components (built-in)
+
+================================================================================
+        END OF PRESENTATION EXPLANATION FILE
+        Banaya gaya: FitnestX Flutter Project ke liye
+        Kisi bhi existing code ko modify nahi kiya gaya.
+================================================================================

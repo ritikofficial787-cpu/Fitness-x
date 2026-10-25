@@ -1,0 +1,337 @@
+﻿SCREEN_WIDGET_EXPLANATION.txt
+FitnestX Flutter Project — Screen-by-Screen Widget Reference
+Navigation order based on actual code in lib/screens/
+================================================================================
+
+1. Welcome Screen (welcome_screen.dart)
+   Widgets: Scaffold, Container, SafeArea, Column, Spacer, RichText, Text, ElevatedButton
+   I used a full-screen Container with a LinearGradient as the background. A Column
+   inside SafeArea stacks the app title (RichText for the "X" bold style), subtitle
+   Text, and a white ElevatedButton. Spacer widgets push the button to the bottom.
+   The button uses Navigator.pushReplacement to go to OnboardingScreen so the user
+   cannot go back.
+
+2. Onboarding Screen (onboarding_screen.dart)
+   Widgets: Scaffold, SafeArea, Column, PageView.builder, OnboardingPage (custom widget),
+            Expanded, Padding, Row, AnimatedContainer, GestureDetector, Container, Icon
+   A PageView.builder shows 4 swipeable pages, each built by a custom OnboardingPage
+   widget. Below the PageView, a Row holds dot indicators (AnimatedContainer changes
+   width from 10px to 30px for the active dot) and a circular GestureDetector button.
+   On the last page the button icon changes to a check mark. Tapping it calls
+   Navigator.pushReplacement to go to RegisterScreen.
+
+3. Register Screen (register_screen.dart)
+   Widgets: Scaffold, SafeArea, SingleChildScrollView, Form, Column, Text,
+            CustomTextField (custom widget), Checkbox, SizedBox, DecoratedBox,
+            LinearGradient, ElevatedButton, Divider, Row, GestureDetector, Container, Icon
+   A Form widget wraps all fields and uses a GlobalKey<FormState> for validation.
+   Each input uses a custom CustomTextField widget. The password field has a suffix
+   IconButton to toggle visibility. A Checkbox handles the Privacy Policy agreement.
+   The Register button is wrapped in a DecoratedBox for the gradient look because
+   ElevatedButton alone cannot apply a gradient. On success, Navigator.push goes to
+   ProfileScreen. A GestureDetector on the Login text navigates to LoginScreen.
+
+4. Profile Setup Screen (profile_screen.dart)
+   Widgets: Scaffold, SafeArea, SingleChildScrollView, Column, Image.asset,
+            DropdownButtonFormField, CustomTextField, Row, Container, ElevatedButton, Text
+   The top section shows an illustration via Image.asset. Gender is selected using a
+   DropdownButtonFormField. Date of Birth uses a read-only CustomTextField with onTap
+   calling showDatePicker (Flutter's built-in date picker). Weight and Height each have
+   a CustomTextField next to a Container badge ("KG" / "CM"). Validation checks all
+   fields before Navigator.push to GoalScreen.
+
+5. Goal Selection Screen (goal_screen.dart)
+   Widgets: Scaffold, SafeArea, Column, Text, Expanded, PageView.builder, Image.asset,
+            AnimatedContainer, Padding, DecoratedBox, ElevatedButton
+   Three fitness goals are shown as swipeable Image.asset cards inside a PageView.builder.
+   Dot indicators (AnimatedContainer) show the current selection. The Confirm button uses
+   Navigator.pushAndRemoveUntil to go to SuccessScreen and clear the whole back stack.
+
+6. Success Screen (success_screen.dart)
+   Widgets: Scaffold, SafeArea, Column, Spacer, SizedBox, Stack, Positioned.fill,
+            CustomPaint, Image.asset, Text, GradientButton (custom widget)
+   A Stack layers a custom-painted blob shape (drawn with _SuccessBlobPainter using
+   Canvas bezier curves and a LinearGradient shader) behind an Image.asset illustration.
+   The GradientButton at the bottom uses Navigator.pushAndRemoveUntil to go to
+   MainNavScreen and remove all previous screens from the stack.
+
+7. Login Screen (login_screen.dart)
+   Widgets: Scaffold, SafeArea, SingleChildScrollView, Form, Column, Text,
+            CustomTextField, Center, DecoratedBox, ElevatedButton, Divider,
+            Row, GestureDetector, Container, Icon
+   Same structure as RegisterScreen but with only Email and Password fields.
+   The "Forgot your password?" text is a plain Text widget with underline decoration —
+   no navigation behind it. The Login button validates the form then calls
+   Navigator.pushAndRemoveUntil to SuccessScreen. The Register link is a GestureDetector.
+
+8. Main Dashboard / Home Screen (home_screen.dart)   <<< DASHBOARD >>>
+   Widgets: Scaffold, SafeArea, SingleChildScrollView, Column, Row, GestureDetector,
+            Container, Text, CircularProgressIndicator, LineChart (fl_chart),
+            LinearProgressIndicator (inside water card), Stack, SizedBox, Icon,
+            Expanded, BarChart (fl_chart)
+
+   Layout: A SingleChildScrollView with a Column holds all sections top to bottom.
+
+   Header: A Row with username Text on the left and two Container icon buttons on the
+   right. The bell button uses Navigator.push to NotificationScreen. The avatar is a
+   Container with a gradient background showing the first letter of the username.
+
+   BMI Card: A full-width Container with LinearGradient. Inside a Row: text on the
+   left and a Stack on the right — a CircularProgressIndicator (value = bmi/40) with
+   the numeric BMI Text centered inside using a Stack.
+
+   Today Target: A simple Container (light blue) with a Row holding Text and a
+   gradient Container acting as a button.
+
+   Activity Status — 4 cards:
+     Heart Rate card: A Container with a LineChart from the fl_chart library.
+       The chart has isCurved: true lines and belowBarData for the fill area.
+     Water Intake card (half width): A Column of small SizedBox-based progress bars
+       built with LinearProgressIndicator-style Containers, one per time slot.
+     Sleep card (half width): A Column with a small BarChart from fl_chart.
+     Calories card: A full-width Container with a LinearProgressIndicator.
+
+   Workout Progress: A BarChart (fl_chart) showing weekly data. The active bar is
+   highlighted with a gradient color.
+
+   Latest Workouts: A Column of workout cards. Each card is a GestureDetector wrapping
+   a Container (light blue background) with a Row for the icon, name/description, and
+   check Icon. Tapping navigates to WorkoutTrackerScreen via Navigator.push.
+
+   Meal Planner, Sleep Tracker, Progress Tracker cards: Each is a GestureDetector
+   wrapping a styled Container. Tapping navigates to the respective screen using
+   Navigator.push.
+
+9. Main Navigation Shell (main_nav_screen.dart)
+   Widgets: Scaffold, IndexedStack, Container, SafeArea, Padding, Row,
+            GestureDetector, AnimatedContainer, Column, Icon, Text
+   The Scaffold body uses an IndexedStack to show one of four screens (Home, Activity,
+   Camera placeholder, Profile) while keeping all of them in memory. The bottom nav
+   is a manually built Row of GestureDetector items, each with a Column of Icon and
+   Text. The center "+" button is a circular gradient Container that opens a
+   showModalBottomSheet with quick-add options.
+
+10. Activity Tracker Screen (activity_tracker_screen.dart)
+    Widgets: Scaffold, SafeArea, SingleChildScrollView, Column, Row, GestureDetector,
+             Container, Text, Icon, BarChart or PieChart (fl_chart), Expanded
+    The header Row has a back-arrow GestureDetector on the left, title Text in the
+    center, and a more-options Container on the right. Below it, a Today Target
+    Container card, an activity progress chart (fl_chart), and a Column of workout
+    list cards showing name, duration, and calories.
+
+11. User Profile Screen (user_profile_screen.dart)
+    Widgets: Scaffold, SafeArea, SingleChildScrollView, Column, Row, Container, Text,
+             Expanded, Switch, GestureDetector, Icon
+    The profile card shows a gradient Container avatar next to the username. A Row of
+    three Container boxes shows Height, Weight, and Age stats. Sections for Account,
+    Notifications, and Other are built as Column lists of Row items. The notification
+    Switch widget controls a bool state. The Logout row uses a GestureDetector calling
+    Navigator.pushAndRemoveUntil back to WelcomeScreen.
+
+12. Notification Screen (notification_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, Padding, Row, GestureDetector, Container,
+             Icon, Text, Expanded, ListView.builder (or Column of cards)
+    A fixed header Row with a back arrow GestureDetector. Notifications are displayed
+    in an Expanded list. Each notification card is a Container with a Row for the
+    unread dot, title Text, and time Text. The back arrow uses Navigator.pop.
+
+13. Workout Tracker Screen (workout/workout_tracker_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, Padding, Row, GestureDetector, Container,
+             Text, Expanded, SingleChildScrollView, BarChart (fl_chart),
+             Switch, Icon, GridView or Wrap
+    The header Row has a back GestureDetector, title, and settings icon. A BarChart
+    from fl_chart shows the weekly workout data. The schedule Row contains a
+    GestureDetector navigating to WorkoutScheduleScreen. Upcoming workout cards are
+    Containers in a Column, each tappable via GestureDetector to WorkoutDetailsScreen.
+    The "What Do You Want To Train" section uses a grid of category Containers,
+    each navigating to WorkoutDetailsScreen.
+
+14. Workout Details Screen (workout/workout_details_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, Stack, Image.asset, Positioned, GestureDetector,
+             Container, SingleChildScrollView, Text, Icon, Row, Expanded, ElevatedButton
+    The header is a Stack with a large workout Image.asset and overlaid back/favourite
+    Container icon buttons. A SingleChildScrollView below shows the workout title,
+    schedule Row, difficulty badge (Container), equipment list, and exercise list cards.
+    A heart IconButton in the header toggles _isFavourite state with setState.
+    The Start Workout button uses Navigator.push to WorkoutProgressScreen.
+
+15. Workout Progress Screen (workout/workout_progress_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, Row, Text, LinearProgressIndicator,
+             GestureDetector, Container, Expanded, Icon, ElevatedButton
+    Shows the current exercise index "Exercise X of Y" and a LinearProgressIndicator
+    bar. Navigation buttons (Previous / Next) are GestureDetector Containers. Tapping
+    the exercise card navigates to ExerciseDetailsScreen. After the last exercise,
+    Navigator.pushReplacement goes to WorkoutCompletedScreen.
+
+16. Exercise Details Screen (workout/exercise_details_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, SingleChildScrollView, Text, Container,
+             GestureDetector, Row, Icon, VideoPlayer (video_player package),
+             AspectRatio, ElevatedButton
+    If the exercise has a video, VideoPlayerController.asset is initialized in initState
+    and displayed with a VideoPlayer widget inside an AspectRatio. A GestureDetector
+    on the video toggles play/pause. A custom [-] counter [+] row built from
+    GestureDetector Containers adjusts the repetitions count. The Save button uses
+    Navigator.pop to return.
+
+17. Workout Completed Screen (workout/workout_completed_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, Spacer, SizedBox, Stack, Positioned.fill,
+             CustomPaint, Image.asset, Text, Container, GestureDetector
+    Same pattern as SuccessScreen: a Stack layers a custom-painted blob
+    (_CongratsBlobPainter) behind an Image.asset trophy illustration. Text shows the
+    congratulations message and a motivational quote. The Go to Home button uses
+    Navigator.pushAndRemoveUntil to MainNavScreen.
+
+18. Workout Schedule Screen (workout/workout_schedule_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, Row, GestureDetector, Container, Text, Icon,
+             Expanded, SingleChildScrollView, ListView or Column of cards, FloatingActionButton
+    A month-year Row with left/right arrow GestureDetectors. A horizontal 7-day date
+    Row (each day is a GestureDetector Container that highlights the selected date).
+    Below, a time-based vertical list shows WorkoutSchedule entries for the selected day.
+    Each schedule card is a GestureDetector navigating to WorkoutScheduleDetailsScreen.
+    A FloatingActionButton navigates to AddWorkoutScheduleScreen.
+
+19. Workout Schedule Details Screen (workout/workout_schedule_details_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, Padding, Row, GestureDetector, Container,
+             Text, SingleChildScrollView, Icon, SizedBox
+    A simple read-only screen. A header Row with a back GestureDetector. The body
+    inside SingleChildScrollView shows a styled Container card with the schedule
+    date, time, workout name, difficulty, reps, and weight details as Text widgets.
+
+20. Add Workout Schedule Screen (workout/add_workout_schedule_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, SingleChildScrollView, Row, Text, Container,
+             GestureDetector, DropdownButtonFormField, Icon, ElevatedButton, Padding
+    Tapping the Date field calls showDatePicker; tapping the Time field calls
+    showTimePicker (both are Flutter built-in dialogs). Workout is selected from a
+    DropdownButtonFormField. Difficulty, reps, and weight use DropdownButtonFormField
+    or tap-selectable Container rows. Save appends to the global scheduleList
+    in-memory and uses Navigator.pop to return.
+
+21. Meal Planner Screen (meal/meal_planner_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, SingleChildScrollView, BarChart (fl_chart),
+             Row, Container, Text, LinearProgressIndicator, TextField, Expanded,
+             GestureDetector, ListView or Column of meal cards
+    The weekly nutrition chart is a BarChart from fl_chart. Today's nutrition macros
+    (Calories, Protein, Carbs, Fat, Fiber) each show a LinearProgressIndicator and
+    Text. Category chips are a horizontal scroll Row of GestureDetector Containers.
+    The search box is a TextField with onChanged updating _searchQuery, which is used
+    in the _filteredMeals computed getter to filter the allMeals list in real time.
+    Each meal card is a GestureDetector navigating to MealDetailsScreen.
+
+22. Meal Details Screen (meal/meal_details_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, SingleChildScrollView, Image.asset, Text,
+             Row, Container (nutrition chips), Expanded, GestureDetector, Icon,
+             ElevatedButton
+    The meal image is displayed with Image.asset at the top. Nutrition values
+    (Calories, Protein, etc.) are shown as small Container chips in a Wrap or Row.
+    Ingredients and preparation steps are Text widgets in a Column. A heart
+    GestureDetector toggles _isFavourite. The "Add To Meal Schedule" button uses
+    Navigator.push to AddMealScheduleScreen.
+
+23. Add Meal Schedule Screen (meal/add_meal_schedule_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, SingleChildScrollView, Row, GestureDetector,
+             Container, Text, Icon, ElevatedButton
+    Meal type is selected by tapping Container chips (Breakfast / Lunch / Snacks /
+    Dinner). The Date field calls showDatePicker on tap. The Time field calls
+    showTimePicker on tap. Saving appends to the in-memory mealScheduleList and
+    Navigator.pop returns to the previous screen.
+
+24. Meal Schedule Screen (meal/meal_schedule_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, Row, GestureDetector, Container, Text,
+             SingleChildScrollView, Expanded, Icon
+    Same calendar pattern as WorkoutScheduleScreen: a month navigator Row and a
+    horizontal 7-day date Row. Below, meals for the selected day are grouped by type
+    (Breakfast, Lunch, Snacks, Dinner) in a Column of cards. Each card is a
+    GestureDetector navigating to MealScheduleDetailsScreen.
+
+25. Meal Schedule Details Screen (meal/meal_schedule_details_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, SingleChildScrollView, Text, Container,
+             Row, Icon, GestureDetector, ElevatedButton
+    Shows the meal name, date, time, type, and nutrition info as Text widgets inside
+    a styled Container card. A "Mark as Done" ElevatedButton toggles a done state
+    via setState. The back arrow is a GestureDetector calling Navigator.pop.
+
+26. Sleep Tracker Screen (sleep/sleep_tracker_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, SingleChildScrollView, BarChart (fl_chart),
+             Container, Text, Row, Switch, GestureDetector, LinearProgressIndicator,
+             Expanded, Icon
+    A BarChart from fl_chart shows 7-day sleep hours. The Last Night Sleep card and
+    Daily Schedule Row are Containers with Text. Today's schedule shows Bedtime and
+    Alarm cards, each with a Switch widget for the enabled/disabled toggle. The Sleep
+    Quality section is a Row of four GestureDetector Containers; tapping one calls
+    setState to update _sleepQuality. The Sleep Goal uses a LinearProgressIndicator.
+    "Mark as Complete" is a GestureDetector that sets _sleepCompleted = true.
+
+27. Sleep Schedule Screen (sleep/sleep_schedule_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, Row, GestureDetector, Container, Text, Icon,
+             SingleChildScrollView, Switch, FloatingActionButton, Expanded
+    A horizontal 7-day date Row to select the date. Sleep schedule entries
+    (Bedtime + Alarm) for the selected day are shown as Container cards with Switch
+    toggles. A Timer.periodic (dart:async) runs every 30 seconds to check if any
+    alarm time matches the current time and if so pushes AlarmRingingScreen. A
+    FloatingActionButton navigates to AddSleepAlarmScreen.
+
+28. Add Sleep Alarm Screen (sleep/add_sleep_alarm_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, SingleChildScrollView, Row, GestureDetector,
+             Container, Text, DropdownButtonFormField, Switch, Icon, ElevatedButton
+    Bedtime field calls showTimePicker on tap. Wake-up time is auto-calculated from
+    bedtime + selected sleep duration. Duration is picked from a DropdownButtonFormField.
+    Repeat options (Every Day / Mon-Fri / Weekends / Custom) are GestureDetector
+    Containers. Custom mode shows a Row of day-chip Containers. A Switch toggles
+    Vibrate. Saving appends to the in-memory sleepScheduleList.
+
+29. Alarm Ringing Screen (sleep/alarm_ringing_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, Spacer, ScaleTransition, Container, Icon,
+             Text, GestureDetector
+    This screen uses AnimationController with SingleTickerProviderStateMixin to
+    create a pulsing ScaleTransition on a large bell Icon Container. AudioPlayer
+    (audioplayers package) plays assets/audio/alarm.mp3 and falls back to vibration
+    via HapticFeedback if the file is missing. A Timer.periodic repeats vibration.
+    The Stop Alarm button is a GestureDetector that stops audio and calls Navigator.pop.
+
+30. Progress Photo Screen (progress/progress_photo_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, Row, GestureDetector, Container, Text, Icon,
+             Expanded, GridView.builder, Image.asset, FloatingActionButton
+    The main gallery is a GridView.builder (2-column) showing dummy ProgressPhoto
+    entries as Image.asset tiles with a date Text label below. A "Compare My Photo"
+    button is a GestureDetector navigating to ProgressComparisonScreen. A
+    FloatingActionButton navigates to TakeProgressPhotoScreen.
+
+31. Take Progress Photo Screen (progress/take_progress_photo_screen.dart)
+    Widgets: Scaffold, SafeArea, Stack, Positioned.fill, Container, Column,
+             Center, GestureDetector, Icon, Row, Image.asset, CircularProgressIndicator
+    This is a UI prototype — no real camera is used. A dark Container simulates a
+    viewfinder with a border overlay. A Column of dummy gallery thumbnails (Image.asset)
+    is shown at the bottom as a strip. The Camera button GestureDetector sets
+    _isCapturing = true briefly, showing a CircularProgressIndicator, then uses
+    Navigator.push to ProgressPhotoPreviewScreen with a selected dummy image path.
+
+32. Progress Photo Preview Screen (progress/progress_photo_preview_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, SingleChildScrollView, Text, Image.asset,
+             Row, GestureDetector, Container, ElevatedButton
+    Shows the selected image via Image.asset with a date Text. A Row of two buttons:
+    Retake (GestureDetector calling Navigator.pop) and Save (GestureDetector that
+    appends to the dummyProgressPhotos list and calls Navigator.popUntil back to the
+    ProgressPhotoScreen).
+
+33. Progress Comparison Screen (progress/progress_comparison_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, Row, GestureDetector, Container, Text, Icon,
+             SingleChildScrollView, Image.asset, Expanded, ElevatedButton
+    Two "Select Month" fields are tappable Containers that open a showModalBottomSheet
+    photo picker — a ListView of dummyProgressPhotos each shown with Image.asset and
+    date Text. Once both photos are selected the Compare button (ElevatedButton) is
+    enabled. It uses Navigator.push to ProgressResultScreen passing both ProgressPhoto
+    objects.
+
+34. Progress Result Screen (progress/progress_result_screen.dart)
+    Widgets: Scaffold, SafeArea, Column, TabBar, TabBarView, TabController,
+             SingleChildScrollView, Row, Image.asset, Text, Container,
+             LinearProgressIndicator, LineChart (fl_chart)
+    Uses a TabController (SingleTickerProviderStateMixin) with two tabs: Photo and
+    Statistics. The Photo tab shows two Image.asset widgets side-by-side with dummy
+    metrics (weight difference, etc.) as Text. The Statistics tab shows
+    LinearProgressIndicator bars for body metrics and a LineChart from fl_chart for
+    the weight trend over time. All data is dummy/hardcoded.
+
+================================================================================
+End of file. No existing code was modified.
+================================================================================
