@@ -1,6 +1,6 @@
-# fitness_gym
+# Fitness-x
 
-A new Flutter project.
+A Flutter App for Smart Fitness Management.
 
 ## Getting Started
 
